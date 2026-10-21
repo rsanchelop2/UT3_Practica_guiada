@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Detalle de reserva')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end flex-wrap gap-3">
+                <div>
+                    <div class="eyebrow">Reserva <span th:text="${'#' + reserva.id}"></span>
+                    </div>
+                    <h1 th:text="${reserva.sala.nombre}">
+                    </h1>
+                    <p th:text="${reserva.cliente.nombre + ' ' + reserva.cliente.apellidos}">
+                    </p>
+                </div><a class="btn btn-primary" th:href="@{/reservas/{id}/editar(id=${reserva.id})}"><i class="bi bi-pencil me-1"></i> Editar</a>
+            </div>
+            <section class="panel col-lg-8">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Sala</dt>
+                    <dd class="col-sm-8" th:text="${reserva.sala.nombre + ' · ' + reserva.sala.codigo}">
+                    </dd>
+                    <dt class="col-sm-4">Cliente</dt>
+                    <dd
+                        class="col-sm-8"
+                        th:text="${reserva.cliente.nombre + ' ' + reserva.cliente.apellidos}"
+                    >
+                    </dd>
+                    <dt class="col-sm-4">Inicio</dt>
+                    <dd class="col-sm-8" th:text="${#temporals.format(reserva.inicio, 'dd/MM/yyyy HH:mm')}">
+                    </dd>
+                    <dt class="col-sm-4">Fin</dt>
+                    <dd class="col-sm-8" th:text="${#temporals.format(reserva.fin, 'dd/MM/yyyy HH:mm')}">
+                    </dd>
+                    <dt class="col-sm-4">Asistentes</dt>
+                    <dd class="col-sm-8" th:text="${reserva.asistentes}">
+                    </dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd
+                        class="col-sm-8"
+                        th:text="${reserva.estado.name() == 'CONFIRMADA' ? 'Confirmada' : 'Cancelada'}"
+                    >
+                    </dd>
+                    <dt class="col-sm-4">Observaciones</dt>
+                    <dd class="col-sm-8" th:text="${reserva.observaciones ?: '—'}">
+                    </dd>
+                </dl><a th:href="@{/reservas}" class="btn btn-light mt-2">Volver a reservas</a>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

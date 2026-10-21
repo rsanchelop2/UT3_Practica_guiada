@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head(${cliente.id == null ? 'Nuevo cliente' : 'Editar cliente'})}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading">
+                <div class="eyebrow">Contactos</div>
+                <h1 th:text="${cliente.id == null ? 'Nuevo cliente' : 'Editar cliente'}">
+                </h1>
+                <p>Información de contacto para gestionar sus reservas.</p>
+            </div>
+            <section class="panel col-lg-9">
+                <!-- th:object enlaza los campos con el objeto del modelo. -->
+                <form th:action="@{/clientes/guardar}" th:object="${cliente}" method="post" novalidate><input type="hidden" th:field="*{id}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label required">Nombre</label><input
+                                id="nombre"
+                                th:field="*{nombre}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                                maxlength="80"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{nombre}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="apellidos" class="form-label required">Apellidos</label><input
+                                id="apellidos"
+                                th:field="*{apellidos}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('apellidos')} ? 'is-invalid'"
+                                maxlength="120"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{apellidos}">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <label for="email" class="form-label required">Email</label><input
+                                id="email"
+                                type="email"
+                                th:field="*{email}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                maxlength="160"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{email}">
+                            </div>
+                            <div class="form-hint">Se guardará en minúsculas.</div>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="telefono" class="form-label">Teléfono</label><input
+                                id="telefono"
+                                type="tel"
+                                th:field="*{telefono}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'"
+                                maxlength="20"
+                            >
+                            <div class="invalid-feedback" th:errors="*{telefono}">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="activo" class="form-label required">Estado</label>
+                            <select id="activo" th:field="*{activo}" class="form-select">
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit"><i class="bi bi-check-lg me-1"></i> Guardar</button><a class="btn btn-light" th:href="@{/clientes}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

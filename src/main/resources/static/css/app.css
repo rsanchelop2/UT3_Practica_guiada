@@ -1,0 +1,242 @@
+/* Variables y estilos generales */
+:root {
+    --nexo-ink: #183743;
+    --nexo-teal: #0c6670;
+    --nexo-accent: #e99b45;
+    --nexo-bg: #f3f7f8;
+    --nexo-line: #dfe8eb;
+}
+body {
+    background: var(--nexo-bg);
+    color: var(--nexo-ink);
+    font-family: Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    min-height: 100vh;
+}
+
+/* Navegación */
+.nexo-nav {
+    background: #fff;
+    border-bottom: 1px solid var(--nexo-line);
+    box-shadow: 0 2px 14px #1837430a;
+}
+.navbar-brand {
+    color: var(--nexo-ink);
+}
+.brand-accent {
+    color: var(--nexo-teal);
+}
+.brand-mark {
+    display: inline-grid;
+    place-items: center;
+    background: var(--nexo-teal);
+    color: white;
+    width: 2rem;
+    height: 2rem;
+    border-radius: .6rem;
+    margin-right: .35rem;
+}
+.nav-link {
+    font-weight: 550;
+    color: #526973;
+}
+.nav-link:hover {
+    color: var(--nexo-teal);
+}
+
+/* Encabezados */
+.page-heading {
+    padding: 2.2rem 0 1.35rem;
+}
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--nexo-teal);
+    font-size: .72rem;
+    font-weight: 800;
+}
+.page-heading h1 {
+    font-size: clamp(1.7rem,3vw,2.3rem);
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+.page-heading p {
+    color: #647983;
+    margin: 0;
+}
+
+/* Tarjetas y paneles */
+.panel,.stat-card {
+    background: #fff;
+    border: 1px solid var(--nexo-line);
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px #18374308;
+}
+.panel {
+    padding: 1.3rem;
+}
+.stat-card {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.stat-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: .9rem;
+    background: #e4f3f3;
+    color: var(--nexo-teal);
+    font-size: 1.25rem;
+}
+.stat-number {
+    font-size: 1.65rem;
+    font-weight: 750;
+    line-height: 1.1;
+}
+.stat-label {
+    color: #637881;
+    font-size: .85rem;
+}
+
+/* Botones */
+.btn-primary {
+    background: var(--nexo-teal);
+    border-color: var(--nexo-teal);
+    font-weight: 600;
+}
+.btn-primary:hover,.btn-primary:focus {
+    background: #084e55;
+    border-color: #084e55;
+}
+.btn-outline-primary {
+    color: var(--nexo-teal);
+    border-color: var(--nexo-teal);
+}
+.btn-outline-primary:hover {
+    background: var(--nexo-teal);
+    border-color: var(--nexo-teal);
+}
+
+/* Tablas */
+.table {
+    --bs-table-bg: transparent;
+    vertical-align: middle;
+}
+.table thead th {
+    font-size: .73rem;
+    text-transform: uppercase;
+    letter-spacing: .065em;
+    color: #71848c;
+    font-weight: 750;
+    border-bottom: 1px solid var(--nexo-line);
+    white-space: nowrap;
+}
+.table tbody td {
+    padding-top: .85rem;
+    padding-bottom: .85rem;
+    border-color: #edf1f3;
+}
+.table tbody tr:hover {
+    background: #f8fbfb;
+}
+.table a.record-link {
+    color: var(--nexo-ink);
+    font-weight: 650;
+    text-decoration: none;
+}
+.table a.record-link:hover {
+    color: var(--nexo-teal);
+}
+
+/* Ordenación */
+.sort-arrows {
+    display: inline-flex;
+    gap: .08rem;
+    margin-left: .25rem;
+}
+.sort-arrows a {
+    color: #aab8be;
+    padding: .1rem;
+    text-decoration: none;
+}
+.sort-arrows a:hover,.sort-arrows a.active {
+    color: var(--nexo-teal);
+}
+.sort-arrows a.active {
+    font-weight: 800;
+    background: #e4f3f3;
+    border-radius: .25rem;
+}
+
+/* Indicadores y estados */
+.badge-soft-success {
+    background: #e1f3eb;
+    color: #186d48;
+}
+.badge-soft-muted {
+    background: #edf0f2;
+    color: #596b73;
+}
+.badge-soft-warning {
+    background: #fff0db;
+    color: #985918;
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 650;
+    font-size: .88rem;
+}
+.required::after {
+    content: " *";
+    color: #bc463e;
+}
+.form-control:focus,.form-select:focus {
+    border-color: #62a7ac;
+    box-shadow: 0 0 0 .22rem #0c667023;
+}
+.form-hint {
+    font-size: .78rem;
+    color: #748890;
+}
+
+/* Otros componentes y paginación */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6c8089;
+}
+.empty-state i {
+    font-size: 2.2rem;
+    color: #9db1b8;
+}
+.dropdown-menu {
+    box-shadow: 0 12px 30px #18374318;
+    border-color: var(--nexo-line);
+}
+.page-link {
+    color: var(--nexo-teal);
+}
+.active>.page-link {
+    background: var(--nexo-teal);
+    border-color: var(--nexo-teal);
+}
+
+/* Responsive */
+@media(max-width:767px) {
+    .page-heading {
+        padding: 1.5rem 0 1rem;
+    }
+    .panel {
+        padding: 1rem;
+    }
+    .table-responsive {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+    .stat-card {
+        padding: 1rem;
+    }
+}

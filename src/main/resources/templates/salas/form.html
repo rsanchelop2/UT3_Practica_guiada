@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head(${sala.id == null ? 'Nueva sala' : 'Editar sala'})}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading">
+                <div class="eyebrow">Espacios</div>
+                <h1 th:text="${sala.id == null ? 'Nueva sala' : 'Editar sala'}">
+                </h1>
+                <p>Define sus datos y disponibilidad general.</p>
+            </div>
+            <section class="panel col-lg-9">
+                <!-- th:object enlaza los campos con el objeto del modelo. -->
+                <form th:action="@{/salas/guardar}" th:object="${sala}" method="post" novalidate><input type="hidden" th:field="*{id}">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="codigo" class="form-label required">Código</label><input
+                                id="codigo"
+                                th:field="*{codigo}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('codigo')} ? 'is-invalid'"
+                                maxlength="30"
+                                required
+                            >
+                            <div
+                                class="invalid-feedback"
+                                th:if="${#fields.hasErrors('codigo')}"
+                                th:errors="*{codigo}"
+                            >
+                            </div>
+                            <div class="form-hint">Identificador único, por ejemplo SAL-101.</div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="nombre" class="form-label required">Nombre</label><input
+                                id="nombre"
+                                th:field="*{nombre}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                                maxlength="100"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{nombre}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ubicacion" class="form-label required">Ubicación</label><input
+                                id="ubicacion"
+                                th:field="*{ubicacion}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('ubicacion')} ? 'is-invalid'"
+                                maxlength="120"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{ubicacion}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="capacidad" class="form-label required">Capacidad</label><input
+                                id="capacidad"
+                                type="number"
+                                min="1"
+                                th:field="*{capacidad}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('capacidad')} ? 'is-invalid'"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{capacidad}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="tarifaHora" class="form-label required">Tarifa por hora (€)</label><input
+                                id="tarifaHora"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                th:field="*{tarifaHora}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('tarifaHora')} ? 'is-invalid'"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{tarifaHora}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="activa" class="form-label required">Estado</label>
+                            <select id="activa" th:field="*{activa}" class="form-select">
+                                <option value="true">Activa</option>
+                                <option value="false">Inactiva</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit"><i class="bi bi-check-lg me-1"></i> Guardar</button><a class="btn btn-light" th:href="@{/salas}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

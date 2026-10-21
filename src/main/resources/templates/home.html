@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Inicio')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading d-flex flex-wrap justify-content-between gap-3 align-items-end">
+                <div>
+                    <div class="eyebrow">Panel de control</div>
+                    <h1>Buenos días, organiza tu espacio</h1>
+                    <p>Una vista clara de salas, clientes y próximas reservas.</p>
+                </div><a class="btn btn-primary" th:href="@{/reservas/nueva}"><i class="bi bi-plus-lg me-1"></i> Nueva reserva</a>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card"><span class="stat-icon"><i class="bi bi-door-open"></i></span>
+                        <div>
+                            <div class="stat-number" th:text="${totalSalas}">0</div>
+                            <div class="stat-label">Salas</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card"><span class="stat-icon"><i class="bi bi-check-circle"></i></span>
+                        <div>
+                            <div class="stat-number" th:text="${salasActivas}">0</div>
+                            <div class="stat-label">Salas activas</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card"><span class="stat-icon"><i class="bi bi-people"></i></span>
+                        <div>
+                            <div class="stat-number" th:text="${totalClientes}">0</div>
+                            <div class="stat-label">Clientes</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-card"><span class="stat-icon"><i class="bi bi-calendar-event"></i></span>
+                        <div>
+                            <div class="stat-number" th:text="${reservasFuturas}">0</div>
+                            <div class="stat-label">Reservas próximas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <section class="panel h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 fw-bold mb-0">Próximas reservas</h2><a th:href="@{/reservas}" class="small text-decoration-none">Ver todas <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                        <div th:if="${#lists.isEmpty(proximas)}" class="empty-state"><i class="bi bi-calendar2-week"></i>
+                            <p class="mt-2 mb-0">Todavía no hay reservas confirmadas próximas.</p>
+                        </div>
+                        <div th:unless="${#lists.isEmpty(proximas)}" class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Sala</th>
+                                        <th>Cliente</th>
+                                        <th>Inicio</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${proximas}">
+                                        <td><a
+                                                class="record-link"
+                                                th:href="@{/reservas/{id}(id=${r.id})}"
+                                                th:text="${r.sala.nombre}"
+                                            ></a>
+                                            <div class="small text-secondary" th:text="${r.sala.codigo}">
+                                            </div>
+                                        </td>
+                                        <td th:text="${r.cliente.nombre + ' ' + r.cliente.apellidos}">
+                                        </td>
+                                        <td th:text="${#temporals.format(r.inicio, 'dd/MM/yyyy HH:mm')}">
+                                        </td>
+                                        <td><span class="badge badge-soft-success">Confirmada</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-4">
+                    <section class="panel h-100">
+                        <h2 class="h5 fw-bold mb-3">Accesos rápidos</h2>
+                        <div class="d-grid gap-2"><a class="btn btn-outline-primary text-start" th:href="@{/salas/nueva}"><i class="bi bi-door-open me-2"></i> Crear sala</a><a class="btn btn-outline-primary text-start" th:href="@{/clientes/nuevo}"><i class="bi bi-person-plus me-2"></i> Crear cliente</a><a class="btn btn-outline-primary text-start" th:href="@{/reservas/nueva}"><i class="bi bi-calendar-plus me-2"></i> Crear reserva</a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

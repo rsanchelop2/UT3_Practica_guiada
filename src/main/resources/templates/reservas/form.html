@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head(${reservaForm.id == null ? 'Nueva reserva' : 'Editar reserva'})}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading">
+                <div class="eyebrow">Agenda</div>
+                <h1 th:text="${reservaForm.id == null ? 'Nueva reserva' : 'Editar reserva'}">
+                </h1>
+                <p>Selecciona una sala, un cliente y un horario disponible.</p>
+            </div>
+            <section class="panel col-lg-10">
+                <!-- th:object enlaza los campos con el objeto del modelo. -->
+                <form th:action="@{/reservas/guardar}" th:object="${reservaForm}" method="post" novalidate><input type="hidden" th:field="*{id}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="salaId" class="form-label required">Sala</label>
+                            <select
+                                id="salaId"
+                                th:field="*{salaId}"
+                                class="form-select"
+                                th:classappend="${#fields.hasErrors('salaId')} ? 'is-invalid'"
+                                required
+                            >
+                                <option value="">Selecciona una sala</option>
+                                <option
+                                    th:each="s : ${salas}"
+                                    th:value="${s.id}"
+                                    th:text="${s.nombre + ' · ' + s.codigo + ' · ' + s.capacidad + ' plazas' + (s.activa ? '' : ' · inactiva')}"
+                                >
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{salaId}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="clienteId" class="form-label required">Cliente</label>
+                            <select
+                                id="clienteId"
+                                th:field="*{clienteId}"
+                                class="form-select"
+                                th:classappend="${#fields.hasErrors('clienteId')} ? 'is-invalid'"
+                                required
+                            >
+                                <option value="">Selecciona un cliente</option>
+                                <option
+                                    th:each="c : ${clientes}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre + ' ' + c.apellidos + (c.activo ? '' : ' · inactivo')}"
+                                >
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{clienteId}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inicio" class="form-label required">Inicio</label><input
+                                id="inicio"
+                                type="datetime-local"
+                                th:field="*{inicio}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('inicio')} ? 'is-invalid'"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{inicio}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fin" class="form-label required">Fin</label><input
+                                id="fin"
+                                type="datetime-local"
+                                th:field="*{fin}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('fin')} ? 'is-invalid'"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{fin}">
+                            </div>
+                            <div class="form-hint">Duración mínima: 30 minutos.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="asistentes" class="form-label required">Asistentes</label><input
+                                id="asistentes"
+                                type="number"
+                                min="1"
+                                th:field="*{asistentes}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('asistentes')} ? 'is-invalid'"
+                                required
+                            >
+                            <div class="invalid-feedback" th:errors="*{asistentes}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="estado" class="form-label required">Estado</label>
+                            <select id="estado" th:field="*{estado}" class="form-select">
+                                <option
+                                    th:each="e : ${estados}"
+                                    th:value="${e}"
+                                    th:text="${e.name() == 'CONFIRMADA' ? 'Confirmada' : 'Cancelada'}"
+                                >
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="observaciones" class="form-label">Observaciones</label><textarea
+                                id="observaciones"
+                                th:field="*{observaciones}"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('observaciones')} ? 'is-invalid'"
+                                rows="3"
+                                maxlength="1000"
+                            ></textarea>
+                            <div class="invalid-feedback" th:errors="*{observaciones}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit"><i class="bi bi-check-lg me-1"></i> Guardar</button><a class="btn btn-light" th:href="@{/reservas}">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

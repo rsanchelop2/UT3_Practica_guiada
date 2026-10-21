@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Clientes')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end gap-3 flex-wrap">
+                <div>
+                    <div class="eyebrow">Contactos</div>
+                    <h1><i class="bi bi-people me-2"></i>Clientes</h1>
+                    <p>Mantén al día los datos de quienes reservan.</p>
+                </div><a th:href="@{/clientes/nuevo}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Nuevo cliente</a>
+            </div>
+            <section class="panel">
+                <p class="small text-secondary">Búsqueda y ordenación pendientes de la práctica; se muestran todos los clientes.</p>
+                <form method="get" th:action="@{/clientes}" class="row g-2 align-items-end mb-3">
+                    <div class="col-md-7">
+                        <label for="q" class="form-label">Buscar</label><input
+                            id="q"
+                            name="q"
+                            class="form-control"
+                            th:value="${q}"
+                            placeholder="Nombre, apellidos o email"
+                        >
+                    </div>
+                    <div class="col-md-3">
+                        <label for="activo" class="form-label">Estado</label>
+                        <select id="activo" name="activo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="true" th:selected="${activo == true}">Activos</option>
+                            <option value="false" th:selected="${activo == false}">Inactivos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid"><button class="btn btn-outline-primary"><i class="bi bi-search me-1"></i> Filtrar</button>
+                    </div><input type="hidden" name="sort" th:value="${sort}"><input type="hidden" name="dir" th:value="${dir}">
+                </form>
+                <div class="d-flex justify-content-between text-secondary small mb-2"><span th:text="${#lists.size(datos)} + ' resultados'"></span>
+                </div>
+                <!-- Los enlaces de ordenación conservan los filtros actuales. -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th th:each="col : ${ {'nombre','apellidos','email','activo'} }"><span th:text="${col == 'activo' ? 'Estado' : #strings.capitalize(col)}"></span><span class="sort-arrows"><a
+                                            th:href="@{/clientes(q=${q},activo=${activo},sort=${col},dir='asc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' ascendente'"
+                                            title="Ascendente"
+                                        ><i class="bi bi-arrow-up"></i></a><a
+                                            th:href="@{/clientes(q=${q},activo=${activo},sort=${col},dir='desc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' descendente'"
+                                            title="Descendente"
+                                        ><i class="bi bi-arrow-down"></i></a></span>
+                                </th>
+                                <th>Teléfono</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${datos}">
+                                <td><a
+                                        class="record-link"
+                                        th:href="@{/clientes/{id}(id=${c.id})}"
+                                        th:text="${c.nombre}"
+                                    ></a>
+                                </td>
+                                <td th:text="${c.apellidos}">
+                                </td>
+                                <td th:text="${c.email}">
+                                </td>
+                                <td><span
+                                        class="badge"
+                                        th:classappend="${c.activo} ? 'badge-soft-success' : 'badge-soft-muted'"
+                                        th:text="${c.activo} ? 'Activo' : 'Inactivo'"
+                                    ></span>
+                                </td>
+                                <td th:text="${c.telefono ?: '—'}">
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown"><button
+                                            class="btn btn-sm btn-light"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            th:aria-label="'Acciones para ' + ${c.nombre}"
+                                        ><i class="bi bi-three-dots-vertical"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a
+                                                    class="dropdown-item"
+                                                    th:href="@{/clientes/{id}/editar(id=${c.id})}"
+                                                ><i class="bi bi-pencil me-2"></i>Editar</a>
+                                            </li>
+                                            <li><button
+                                                    class="dropdown-item text-danger"
+                                                    type="button"
+                                                    data-bs-toggle="modal"
+                                                    th:attr="data-bs-target='#eliminarCliente' + ${c.id}"
+                                                ><i class="bi bi-trash me-2"></i>Eliminar</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Confirmación antes de enviar la eliminación por POST. -->
+                                    <div
+                                        class="modal fade text-start"
+                                        th:id="'eliminarCliente' + ${c.id}"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title h5">Eliminar cliente</h2><button
+                                                        type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Cerrar"
+                                                    ></button>
+                                                </div>
+                                                <div class="modal-body">¿Eliminar a <strong th:text="${c.nombre + ' ' + c.apellidos}"></strong>?</div>
+                                                <div class="modal-footer"><button
+                                                        type="button"
+                                                        class="btn btn-light"
+                                                        data-bs-dismiss="modal"
+                                                    >Cancelar</button>
+                                                    <form
+                                                        method="post"
+                                                        th:action="@{/clientes/{id}/eliminar(id=${c.id})}"
+                                                    ><button type="submit" class="btn btn-danger">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${#lists.isEmpty(datos)}" class="empty-state"><i class="bi bi-person-x"></i>
+                    <p class="mt-2">No hay clientes para mostrar.</p><a th:href="@{/clientes}" class="btn btn-outline-primary btn-sm">Limpiar controles</a>
+                </div>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

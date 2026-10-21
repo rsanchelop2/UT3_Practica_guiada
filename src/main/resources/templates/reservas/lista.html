@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Reservas')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end gap-3 flex-wrap">
+                <div>
+                    <div class="eyebrow">Agenda</div>
+                    <h1><i class="bi bi-calendar-check me-2"></i>Reservas</h1>
+                    <p>Visualiza horarios, participantes y disponibilidad.</p>
+                </div><a th:href="@{/reservas/nueva}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Nueva reserva</a>
+            </div>
+            <section class="panel">
+                <p class="small text-secondary">Búsqueda y ordenación pendientes de la práctica; se muestran todas las reservas.</p>
+                <form method="get" th:action="@{/reservas}" class="row g-2 align-items-end mb-3">
+                    <div class="col-md-4">
+                        <label for="q" class="form-label">Buscar</label><input
+                            id="q"
+                            name="q"
+                            class="form-control"
+                            th:value="${q}"
+                            placeholder="Cliente o sala"
+                        >
+                    </div>
+                    <div class="col-md-2">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select id="estado" name="estado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="CONFIRMADA" th:selected="${estado?.name() == 'CONFIRMADA'}">Confirmada</option>
+                            <option value="CANCELADA" th:selected="${estado?.name() == 'CANCELADA'}">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="desde" class="form-label">Desde</label><input
+                            id="desde"
+                            name="desde"
+                            type="datetime-local"
+                            class="form-control"
+                            th:value="${desde == null ? '' : #temporals.format(desde, 'yyyy-MM-dd''T''HH:mm')}"
+                        >
+                    </div>
+                    <div class="col-md-3">
+                        <label for="hasta" class="form-label">Hasta</label><input
+                            id="hasta"
+                            name="hasta"
+                            type="datetime-local"
+                            class="form-control"
+                            th:value="${hasta == null ? '' : #temporals.format(hasta, 'yyyy-MM-dd''T''HH:mm')}"
+                        >
+                    </div>
+                    <div class="col-md-5">
+                        <label for="salaId" class="form-label">Sala</label>
+                        <select id="salaId" name="salaId" class="form-select">
+                            <option value="">Todas</option>
+                            <option
+                                th:each="s : ${salas}"
+                                th:value="${s.id}"
+                                th:text="${s.nombre + ' · ' + s.codigo}"
+                                th:selected="${salaId == s.id}"
+                            >
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="clienteId" class="form-label">Cliente</label>
+                        <select id="clienteId" name="clienteId" class="form-select">
+                            <option value="">Todos</option>
+                            <option
+                                th:each="c : ${clientes}"
+                                th:value="${c.id}"
+                                th:text="${c.nombre + ' ' + c.apellidos}"
+                                th:selected="${clienteId == c.id}"
+                            >
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid"><button class="btn btn-outline-primary"><i class="bi bi-search me-1"></i> Filtrar</button>
+                    </div><input type="hidden" name="sort" th:value="${sort}"><input type="hidden" name="dir" th:value="${dir}">
+                </form>
+                <div class="d-flex justify-content-between text-secondary small mb-2"><span th:text="${#lists.size(datos)} + ' resultados'"></span>
+                </div>
+                <!-- Los enlaces de ordenación conservan los filtros actuales. -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th th:each="col : ${ {'sala','cliente','inicio','fin','asistentes','estado'} }"><span th:text="${col == 'sala' ? 'Sala' : (col == 'cliente' ? 'Cliente' : (col == 'inicio' ? 'Inicio' : (col == 'fin' ? 'Fin' : (col == 'estado' ? 'Estado' : 'Asistentes'))))}"></span><span class="sort-arrows"><a
+                                            th:href="@{/reservas(q=${q},estado=${estado},desde=${desde},hasta=${hasta},salaId=${salaId},clienteId=${clienteId},sort=${col},dir='asc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' ascendente'"
+                                            title="Ascendente"
+                                        ><i class="bi bi-arrow-up"></i></a><a
+                                            th:href="@{/reservas(q=${q},estado=${estado},desde=${desde},hasta=${hasta},salaId=${salaId},clienteId=${clienteId},sort=${col},dir='desc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' descendente'"
+                                            title="Descendente"
+                                        ><i class="bi bi-arrow-down"></i></a></span>
+                                </th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${datos}">
+                                <td><a
+                                        class="record-link"
+                                        th:href="@{/reservas/{id}(id=${r.id})}"
+                                        th:text="${r.sala.nombre}"
+                                    ></a>
+                                    <div class="small text-secondary" th:text="${r.sala.codigo}">
+                                    </div>
+                                </td>
+                                <td><span th:text="${r.cliente.nombre + ' ' + r.cliente.apellidos}"></span>
+                                    <div class="small text-secondary" th:text="${r.cliente.email}">
+                                    </div>
+                                </td>
+                                <td th:text="${#temporals.format(r.inicio, 'dd/MM/yyyy HH:mm')}">
+                                </td>
+                                <td th:text="${#temporals.format(r.fin, 'dd/MM/yyyy HH:mm')}">
+                                </td>
+                                <td th:text="${r.asistentes}">
+                                </td>
+                                <td><span
+                                        class="badge"
+                                        th:classappend="${r.estado.name() == 'CONFIRMADA'} ? 'badge-soft-success' : 'badge-soft-muted'"
+                                        th:text="${r.estado.name() == 'CONFIRMADA'} ? 'Confirmada' : 'Cancelada'"
+                                    ></span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown"><button
+                                            class="btn btn-sm btn-light"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            th:aria-label="'Acciones para reserva ' + ${r.id}"
+                                        ><i class="bi bi-three-dots-vertical"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a
+                                                    class="dropdown-item"
+                                                    th:href="@{/reservas/{id}/editar(id=${r.id})}"
+                                                ><i class="bi bi-pencil me-2"></i>Editar</a>
+                                            </li>
+                                            <li><button
+                                                    class="dropdown-item text-danger"
+                                                    type="button"
+                                                    data-bs-toggle="modal"
+                                                    th:attr="data-bs-target='#eliminarReserva' + ${r.id}"
+                                                ><i class="bi bi-trash me-2"></i>Eliminar</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Confirmación antes de enviar la eliminación por POST. -->
+                                    <div
+                                        class="modal fade text-start"
+                                        th:id="'eliminarReserva' + ${r.id}"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title h5">Eliminar reserva</h2><button
+                                                        type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Cerrar"
+                                                    ></button>
+                                                </div>
+                                                <div class="modal-body">¿Eliminar la reserva de <strong th:text="${r.cliente.nombre + ' ' + r.cliente.apellidos}"></strong> en <strong th:text="${r.sala.nombre}"></strong>?</div>
+                                                <div class="modal-footer"><button
+                                                        type="button"
+                                                        class="btn btn-light"
+                                                        data-bs-dismiss="modal"
+                                                    >Cancelar</button>
+                                                    <form
+                                                        method="post"
+                                                        th:action="@{/reservas/{id}/eliminar(id=${r.id})}"
+                                                    ><button type="submit" class="btn btn-danger">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${#lists.isEmpty(datos)}" class="empty-state"><i class="bi bi-calendar-x"></i>
+                    <p class="mt-2">Todavía no hay reservas para mostrar.</p><a th:href="@{/reservas}" class="btn btn-outline-primary btn-sm">Limpiar controles</a>
+                </div>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Detalle de cliente')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end flex-wrap gap-3">
+                <div>
+                    <div class="eyebrow">Cliente</div>
+                    <h1 th:text="${cliente.nombre + ' ' + cliente.apellidos}">
+                    </h1>
+                </div><a class="btn btn-primary" th:href="@{/clientes/{id}/editar(id=${cliente.id})}"><i class="bi bi-pencil me-1"></i> Editar</a>
+            </div>
+            <section class="panel col-lg-8">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8" th:text="${cliente.email}">
+                    </dd>
+                    <dt class="col-sm-4">Teléfono</dt>
+                    <dd class="col-sm-8" th:text="${cliente.telefono ?: '—'}">
+                    </dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8" th:text="${cliente.activo} ? 'Activo' : 'Inactivo'">
+                    </dd>
+                </dl><a th:href="@{/clientes}" class="btn btn-light mt-2">Volver a clientes</a>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

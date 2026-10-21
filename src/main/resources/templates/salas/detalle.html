@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Detalle de sala')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end flex-wrap gap-3">
+                <div>
+                    <div class="eyebrow">Sala <span th:text="${sala.codigo}"></span>
+                    </div>
+                    <h1 th:text="${sala.nombre}">
+                    </h1>
+                </div><a class="btn btn-primary" th:href="@{/salas/{id}/editar(id=${sala.id})}"><i class="bi bi-pencil me-1"></i> Editar</a>
+            </div>
+            <section class="panel col-lg-8">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Código</dt>
+                    <dd class="col-sm-8" th:text="${sala.codigo}">
+                    </dd>
+                    <dt class="col-sm-4">Ubicación</dt>
+                    <dd class="col-sm-8" th:text="${sala.ubicacion}">
+                    </dd>
+                    <dt class="col-sm-4">Capacidad</dt>
+                    <dd class="col-sm-8" th:text="${sala.capacidad} + ' personas'">
+                    </dd>
+                    <dt class="col-sm-4">Tarifa por hora</dt>
+                    <dd class="col-sm-8" th:text="${#numbers.formatDecimal(sala.tarifaHora, 1, 2)} + ' €'">
+                    </dd>
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8" th:text="${sala.activa} ? 'Activa' : 'Inactiva'">
+                    </dd>
+                </dl><a th:href="@{/salas}" class="btn btn-light mt-2">Volver a salas</a>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>

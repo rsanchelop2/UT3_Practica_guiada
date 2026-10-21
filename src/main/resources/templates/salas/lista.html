@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{fragments/layout :: head('Salas')}">
+    </head>
+    <body>
+        <nav th:replace="~{fragments/layout :: nav}">
+        </nav>
+        <div th:replace="~{fragments/layout :: mensajes}">
+        </div>
+        <main class="container-xl">
+            <div class="page-heading d-flex justify-content-between align-items-end gap-3 flex-wrap">
+                <div>
+                    <div class="eyebrow">Espacios</div>
+                    <h1><i class="bi bi-door-open me-2"></i>Salas</h1>
+                    <p>Consulta disponibilidad y administra los espacios.</p>
+                </div><a th:href="@{/salas/nueva}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Nueva sala</a>
+            </div>
+            <section class="panel">
+                <p class="small text-secondary">Búsqueda y ordenación pendientes de la práctica; se muestran todas las salas.</p>
+                <form method="get" th:action="@{/salas}" class="row g-2 align-items-end mb-3">
+                    <div class="col-md-4">
+                        <label for="q" class="form-label">Buscar</label><input
+                            id="q"
+                            name="q"
+                            class="form-control"
+                            th:value="${q}"
+                            placeholder="Código o nombre"
+                        >
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ubicacion" class="form-label">Ubicación</label><input
+                            id="ubicacion"
+                            name="ubicacion"
+                            class="form-control"
+                            th:value="${ubicacion}"
+                            placeholder="Todas"
+                        >
+                    </div>
+                    <div class="col-md-2">
+                        <label for="activa" class="form-label">Estado</label>
+                        <select id="activa" name="activa" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="true" th:selected="${activa == true}">Activas</option>
+                            <option value="false" th:selected="${activa == false}">Inactivas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="capacidad" class="form-label">Capacidad mín.</label><input
+                            id="capacidad"
+                            name="capacidad"
+                            type="number"
+                            min="1"
+                            class="form-control"
+                            th:value="${capacidad}"
+                        >
+                    </div>
+                    <div class="col-md-1 d-grid"><button class="btn btn-outline-primary" title="Filtrar" aria-label="Filtrar"><i class="bi bi-search"></i></button>
+                    </div><input type="hidden" name="sort" th:value="${sort}"><input type="hidden" name="dir" th:value="${dir}">
+                </form>
+                <div class="d-flex justify-content-between text-secondary small mb-2"><span th:text="${#lists.size(datos)} + ' resultados'"></span>
+                </div>
+                <!-- Los enlaces de ordenación conservan los filtros actuales. -->
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th th:each="col : ${ {'codigo','nombre','ubicacion','capacidad','tarifaHora','activa'} }"><span th:text="${col == 'tarifaHora' ? 'Tarifa/hora' : (col == 'activa' ? 'Estado' : #strings.capitalize(col))}"></span><span class="sort-arrows"><a
+                                            th:href="@{/salas(q=${q},ubicacion=${ubicacion},activa=${activa},capacidad=${capacidad},sort=${col},dir='asc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' ascendente'"
+                                            title="Ascendente"
+                                        ><i class="bi bi-arrow-up"></i></a><a
+                                            th:href="@{/salas(q=${q},ubicacion=${ubicacion},activa=${activa},capacidad=${capacidad},sort=${col},dir='desc')}"
+                                            th:aria-label="'Ordenar ' + ${col} + ' descendente'"
+                                            title="Descendente"
+                                        ><i class="bi bi-arrow-down"></i></a></span>
+                                </th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${datos}">
+                                <td><a
+                                        class="record-link"
+                                        th:href="@{/salas/{id}(id=${s.id})}"
+                                        th:text="${s.codigo}"
+                                    ></a>
+                                </td>
+                                <td th:text="${s.nombre}">
+                                </td>
+                                <td th:text="${s.ubicacion}">
+                                </td>
+                                <td th:text="${s.capacidad}">
+                                </td>
+                                <td th:text="${#numbers.formatDecimal(s.tarifaHora, 1, 2)} + ' €'">
+                                </td>
+                                <td><span
+                                        class="badge"
+                                        th:classappend="${s.activa} ? 'badge-soft-success' : 'badge-soft-muted'"
+                                        th:text="${s.activa} ? 'Activa' : 'Inactiva'"
+                                    ></span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown"><button
+                                            class="btn btn-sm btn-light"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            th:aria-label="'Acciones para ' + ${s.nombre}"
+                                        ><i class="bi bi-three-dots-vertical"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a
+                                                    class="dropdown-item"
+                                                    th:href="@{/salas/{id}/editar(id=${s.id})}"
+                                                ><i class="bi bi-pencil me-2"></i>Editar</a>
+                                            </li>
+                                            <li><button
+                                                    class="dropdown-item text-danger"
+                                                    type="button"
+                                                    data-bs-toggle="modal"
+                                                    th:attr="data-bs-target='#eliminarSala' + ${s.id}"
+                                                ><i class="bi bi-trash me-2"></i>Eliminar</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Confirmación antes de enviar la eliminación por POST. -->
+                                    <div
+                                        class="modal fade text-start"
+                                        th:id="'eliminarSala' + ${s.id}"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h2 class="modal-title h5">Eliminar sala</h2><button
+                                                        type="button"
+                                                        class="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Cerrar"
+                                                    ></button>
+                                                </div>
+                                                <div class="modal-body">¿Eliminar la sala <strong th:text="${s.nombre + ' (' + s.codigo + ')'}"></strong>?</div>
+                                                <div class="modal-footer"><button
+                                                        type="button"
+                                                        class="btn btn-light"
+                                                        data-bs-dismiss="modal"
+                                                    >Cancelar</button>
+                                                    <form
+                                                        method="post"
+                                                        th:action="@{/salas/{id}/eliminar(id=${s.id})}"
+                                                    ><button type="submit" class="btn btn-danger">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${#lists.isEmpty(datos)}" class="empty-state"><i class="bi bi-door-closed"></i>
+                    <p class="mt-2">No hay salas para mostrar.</p><a th:href="@{/salas}" class="btn btn-outline-primary btn-sm">Limpiar controles</a>
+                </div>
+            </section>
+        </main>
+        <footer th:replace="~{fragments/layout :: footer}">
+        </footer>
+        <th:block th:replace="~{fragments/layout :: scripts}">
+        </th:block>
+    </body>
+</html>
