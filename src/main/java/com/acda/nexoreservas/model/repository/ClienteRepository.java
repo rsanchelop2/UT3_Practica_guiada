@@ -1,6 +1,7 @@
 package com.acda.nexoreservas.model.repository;
 
 import com.acda.nexoreservas.model.entity.Cliente;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +32,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     """)
     List<Cliente> buscar(
             @Param("q") String q,
-            @Param("activo") Boolean activo
+            @Param("activo") Boolean activo,
+            Sort sort
     );
 }

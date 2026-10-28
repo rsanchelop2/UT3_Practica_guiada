@@ -5,6 +5,7 @@ import com.acda.nexoreservas.exception.ResourceNotFoundException;
 import com.acda.nexoreservas.model.entity.Cliente;
 import com.acda.nexoreservas.model.repository.ClienteRepository;
 import com.acda.nexoreservas.model.repository.ReservaRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,18 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public List<Cliente> buscar(String q, Boolean activo, String orden, String direccion) {
         // TODO bloques 3 y 4: consulta por texto/estado y ordenación.
+        String campo = orden != null && ORDENES.contains(orden)
+                ? orden
+                : "apellidos";
+        Sort.Direction sentido = "desc".equalsIgnoreCase(direccion)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        Sort sort = Sort.by(
+                new Sort.Order(sentido, campo),
+                new Sort.Order(Sort.Direction.ASC, "id")
+        );
 
-        return clientes.buscar(q == null || q.isBlank() ? null : q.trim(), activo);
+        return clientes.buscar(q == null || q.isBlank() ? null : q.trim(), activo, sort);
     }
 
     @Transactional(readOnly = true)

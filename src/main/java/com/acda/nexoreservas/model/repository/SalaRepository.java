@@ -1,6 +1,7 @@
 package com.acda.nexoreservas.model.repository;
 
 import com.acda.nexoreservas.model.entity.Sala;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,6 +34,9 @@ public interface SalaRepository extends JpaRepository<Sala, Long> {
             @Param("q") String q,
             @Param("ubicacion") String ubicacion,
             @Param("activa") Boolean activa,
-            @Param("capacidad") Integer capacidad
+            @Param("capacidad") Integer capacidad,
+            Sort sort
+
     );
+
 }

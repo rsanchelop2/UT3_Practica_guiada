@@ -10,6 +10,7 @@ import com.acda.nexoreservas.model.repository.ClienteRepository;
 import com.acda.nexoreservas.model.repository.ReservaRepository;
 import com.acda.nexoreservas.model.repository.SalaRepository;
 import com.acda.nexoreservas.web.form.ReservaForm;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,16 @@ public class ReservaService {
                                 String orden, String direccion) {
         // TODO bloque 3: filtros de estado, fechas, texto y relaciones.
         // TODO bloque 4: ordenar con Sort y ORDENES tras mapear las relaciones.
-        return reservas.buscar(q == null || q.isBlank() ? null : q.trim(),estado, desde, hasta, salaId, clienteId);
+        String campo = orden == null ? "inicio" : ORDENES.getOrDefault(orden, "inicio");
+        Sort.Direction sentido = "asc".equalsIgnoreCase(direccion)
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        Sort sort = Sort.by(
+                new Sort.Order(sentido, campo),
+                new Sort.Order(Sort.Direction.ASC, "id")
+        );
+
+        return reservas.buscar(q, estado, desde, hasta, salaId, clienteId, sort);
     }
 
     @Transactional(readOnly = true)

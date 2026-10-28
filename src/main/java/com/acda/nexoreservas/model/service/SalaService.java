@@ -5,6 +5,7 @@ import com.acda.nexoreservas.exception.ResourceNotFoundException;
 import com.acda.nexoreservas.model.entity.Sala;
 import com.acda.nexoreservas.model.repository.ReservaRepository;
 import com.acda.nexoreservas.model.repository.SalaRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +34,22 @@ public class SalaService {
                              Integer capacidad, String orden, String direccion) {
         // TODO bloque 3: aplicar filtros con una consulta de repositorio.
         // TODO bloque 4: aplicar Sort.Direction.ASC/DESC con ORDENES.
+        String campo = orden != null && ORDENES.contains(orden)
+                ? orden
+                : "codigo";
+        Sort.Direction sentido = "desc".equalsIgnoreCase(direccion)
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Sort sort = Sort.by(
+                new Sort.Order(sentido, campo),
+                new Sort.Order(Sort.Direction.ASC, "id")
+        );
+
         String texto = q == null || q.isBlank() ? null : q.trim();
         String lugar = ubicacion == null || ubicacion.isBlank()
                 ? null : ubicacion.trim();
-        return salas.buscar(texto, lugar, activa, capacidad);
+        return salas.buscar(texto, lugar, activa, capacidad, sort);
     }
 
     @Transactional(readOnly = true)

@@ -2,6 +2,7 @@ package com.acda.nexoreservas.model.repository;
 
 import com.acda.nexoreservas.model.entity.EstadoReserva;
 import com.acda.nexoreservas.model.entity.Reserva;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -70,6 +71,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             @Param("desde") LocalDateTime desde,
             @Param("hasta") LocalDateTime hasta,
             @Param("salaId") Long salaId,
-            @Param("clienteId") Long clienteId
+            @Param("clienteId") Long clienteId,
+            Sort sort
     );
 }
