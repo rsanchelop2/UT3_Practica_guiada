@@ -42,7 +42,7 @@ public class ReservaService {
                                 String orden, String direccion) {
         // TODO bloque 3: filtros de estado, fechas, texto y relaciones.
         // TODO bloque 4: ordenar con Sort y ORDENES tras mapear las relaciones.
-        return reservas.findAll();
+        return reservas.buscar(q == null || q.isBlank() ? null : q.trim(),estado, desde, hasta, salaId, clienteId);
     }
 
     @Transactional(readOnly = true)
@@ -107,6 +107,16 @@ public class ReservaService {
         if (form.getEstado() == EstadoReserva.CONFIRMADA
                 && (!Boolean.TRUE.equals(sala.getActiva()) || !Boolean.TRUE.equals(cliente.getActivo()))) {
             throw new BusinessException("Para confirmar la reserva, la sala y el cliente deben estar activos");
+        }
+
+        if (form.getEstado() == EstadoReserva.CONFIRMADA) {
+            boolean hayConflicto = form.getId() == null
+                    ? reservas.hayConflicto(sala.getId(), form.getInicio(), form.getFin())
+                    : reservas.hayConflictoExcluyendo(
+                            sala.getId(), form.getInicio(), form.getFin(), form.getId());
+            if (hayConflicto) {
+                throw new BusinessException("La sala ya tiene una reserva confirmada en ese horario");
+            }
         }
 
         reserva.setSala(sala);

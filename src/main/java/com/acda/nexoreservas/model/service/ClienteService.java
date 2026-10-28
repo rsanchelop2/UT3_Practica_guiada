@@ -29,7 +29,8 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public List<Cliente> buscar(String q, Boolean activo, String orden, String direccion) {
         // TODO bloques 3 y 4: consulta por texto/estado y ordenación.
-        return clientes.findAll();
+
+        return clientes.buscar(q == null || q.isBlank() ? null : q.trim(), activo);
     }
 
     @Transactional(readOnly = true)

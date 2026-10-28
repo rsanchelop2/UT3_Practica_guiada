@@ -33,7 +33,10 @@ public class SalaService {
                              Integer capacidad, String orden, String direccion) {
         // TODO bloque 3: aplicar filtros con una consulta de repositorio.
         // TODO bloque 4: aplicar Sort.Direction.ASC/DESC con ORDENES.
-        return salas.findAll();
+        String texto = q == null || q.isBlank() ? null : q.trim();
+        String lugar = ubicacion == null || ubicacion.isBlank()
+                ? null : ubicacion.trim();
+        return salas.buscar(texto, lugar, activa, capacidad);
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +60,6 @@ public class SalaService {
         return salas.countByActivaTrue();
     }
 
-    // La transacción reúne comprobaciones y escritura; BusinessException revierte.
     @Transactional
     public Sala guardar(Sala entrada) {
         if (entrada == null || entrada.getCodigo() == null || entrada.getCodigo().isBlank()
@@ -85,7 +87,6 @@ public class SalaService {
             throw new BusinessException("Ya existe una sala con ese código");
         }
         if (entrada.getId() != null) {
-            // Evita que un ID de formulario inexistente cree una sala nueva.
             Sala actual = obtener(entrada.getId());
             actual.setCodigo(entrada.getCodigo());
             actual.setNombre(entrada.getNombre());
