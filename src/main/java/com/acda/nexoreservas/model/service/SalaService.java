@@ -3,6 +3,7 @@ package com.acda.nexoreservas.model.service;
 import com.acda.nexoreservas.exception.BusinessException;
 import com.acda.nexoreservas.exception.ResourceNotFoundException;
 import com.acda.nexoreservas.model.entity.Sala;
+import com.acda.nexoreservas.model.repository.ReservaRepository;
 import com.acda.nexoreservas.model.repository.SalaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,13 @@ public class SalaService {
             "codigo", "nombre", "ubicacion", "capacidad", "tarifaHora", "activa");
 
     private final SalaRepository salas;
+    private final ReservaRepository reservas;
 
-    public SalaService(SalaRepository salas) {
+    public SalaService(SalaRepository salas, ReservaRepository reservas) {
         this.salas = salas;
+        this.reservas = reservas;
     }
+
 
     @Transactional(readOnly = true)
     public List<Sala> buscar(String q, String ubicacion, Boolean activa,
@@ -98,6 +102,13 @@ public class SalaService {
     public void eliminar(Long id) {
         // TODO bloque 1: obtener, comprobar reglas y eliminar con el repositorio.
         // En bloque 2, impedir el borrado si hay reservas asociadas.
+        Sala sala = obtener(id);
+        if (reservas.existsBySalaId(id)) {
+            throw new BusinessException(
+                    "No puedes eliminar esta sala porque tiene reservas asociadas"
+            );
+        }
+        salas.delete(sala);
         throw new BusinessException("Eliminar sala: operación pendiente de la práctica");
     }
 }

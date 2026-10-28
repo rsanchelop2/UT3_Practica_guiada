@@ -4,6 +4,7 @@ import com.acda.nexoreservas.exception.BusinessException;
 import com.acda.nexoreservas.exception.ResourceNotFoundException;
 import com.acda.nexoreservas.model.entity.Cliente;
 import com.acda.nexoreservas.model.repository.ClienteRepository;
+import com.acda.nexoreservas.model.repository.ReservaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,11 @@ public class ClienteService {
     private static final Set<String> ORDENES = Set.of("nombre", "apellidos", "email", "activo");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private final ClienteRepository clientes;
+    private final ReservaRepository reservas;
 
-    public ClienteService(ClienteRepository clientes) {
+    public ClienteService(ClienteRepository clientes, ReservaRepository reservas) {
         this.clientes = clientes;
+        this.reservas = reservas;
     }
 
     @Transactional(readOnly = true)
@@ -100,8 +103,12 @@ public class ClienteService {
 
     @Transactional
     public void eliminar(Long id) {
-        // TODO bloque 1: obtener, comprobar reglas y eliminar.
+        // TODO bloque 1: obtener, comprobar reglas y eliminar con el repositorio.
         // En bloque 2, impedir el borrado si hay reservas asociadas.
-        throw new BusinessException("Eliminar cliente: operación pendiente de la práctica");
+        Cliente cliente = obtener(id);
+        if (reservas.existsByClienteId(id)) {
+            throw new BusinessException("No se puede eliminar el cliente porque tiene reservas asociadas.");
+        }
+        clientes.delete(cliente);
     }
 }

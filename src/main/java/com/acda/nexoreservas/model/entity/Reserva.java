@@ -1,14 +1,6 @@
 package com.acda.nexoreservas.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,11 +18,13 @@ public class Reserva {
     private Long id;
 
     // TODO bloque 2: sustituir @Transient por @ManyToOne y @JoinColumn.
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "sala_id", nullable = false, foreignKey = @ForeignKey(name = "fk_reservas_sala"))
     private Sala sala;
 
     // TODO bloque 2: mapear la clave foránea del cliente.
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cliente_id", nullable = false, foreignKey = @ForeignKey(name = "fk_reservas_cliente"))
     private Cliente cliente;
 
     @NotNull
